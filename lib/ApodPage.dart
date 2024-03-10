@@ -16,6 +16,7 @@ class _APODPageState extends State<APODPage> {
   
   int selectedApod = 0;
   Future<List<String>>? apodDaysDesc;
+  final api = Api.instance;
 
   @override
   void initState(){
@@ -25,7 +26,7 @@ class _APODPageState extends State<APODPage> {
   @override
   Widget build(BuildContext context){
     return FutureBuilder<List<Map<String, dynamic>>>(
-      future: Api().getApodInfos(),
+      future: api.getApodInfos(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
