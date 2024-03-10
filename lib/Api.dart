@@ -32,6 +32,6 @@ class Api{
       response.data.map((item) => {'hdurl': item['hdurl'], 'url':response.data['url'], 'desc': item['explanation']})
     );
 
-    return hdUrls.reversed;
+    return hdUrls;
   }
 }
