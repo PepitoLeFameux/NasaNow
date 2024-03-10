@@ -4,8 +4,9 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:nasa_now/Api.dart';
+import 'package:nasa_now/api.dart';
 import 'package:nasa_now/ApodPage.dart';
+import 'package:path_provider/path_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -46,17 +47,18 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   var selectedIndex = 0;
+  final int r = 4;
 
-  Future<Map<String, String>>? apod;
-  Future<List<Map<String, String>>>? apodDays;
-  var imageList = [];
+  void updateIndex(int index){
+    debugPrint(index.toString());
+    setState(() {
+      selectedIndex = index;
+    });
+  }
 
   @override
   void initState() {
     super.initState();
-    // Fetch data when the state is initialized.
-    apod = Api().getAPOD();
-    apodDays = Api().getAPODDays(20);
   }
 
   @override
@@ -65,8 +67,10 @@ class _MyHomePageState extends State<MyHomePage> {
     switch(selectedIndex){
       case 0:
         page = APODPage();
+        break;
       case 1:
         page = Placeholder();
+        break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
@@ -80,13 +84,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 gradient: RadialGradient(
                   center: Alignment.topLeft,
                   radius: 1.1,
-                  colors: [Color.fromARGB(255, 14, 13, 30), Color.fromARGB(255, 28, 26, 86)],
+                  colors: [Color.fromARGB(255, 14, 13, 30),Color.fromARGB(255, 28, 26, 86)],
                 )
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  NavigationSideBar(),
+                  NavigationSideBar(onItemSelected: updateIndex),
                   Expanded(
                     child: Padding(
                       padding: EdgeInsets.only(top: 8, left:8),
@@ -116,7 +120,8 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class NavigationSideBar extends StatefulWidget {
-  const NavigationSideBar({super.key});
+  final Function(int) onItemSelected;
+  const NavigationSideBar({super.key, required this.onItemSelected});
 
   @override
   State<NavigationSideBar> createState() => _NavigationSideBarState();
@@ -129,12 +134,13 @@ class _NavigationSideBarState extends State<NavigationSideBar>{
   Widget _buildNavItem({required IconData icon, required IconData selectedIcon, required String label, required int index}){
     final bool isSelected = index == selectedIndex;
     return InkWell(
-      onTap:  (){
+      onTap:  () {
+        widget.onItemSelected(index);
         setState(() {
           selectedIndex = index;
-          debugText = "Selected index: $index";
         });
       },
+
       child: Card(
         color:Colors.transparent,
         child: Padding(
