@@ -1,11 +1,10 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
 import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:nasa_now/api.dart';
 import 'package:nasa_now/ApodPage.dart';
+import 'package:nasa_now/SatPage.dart';
 import 'package:path_provider/path_provider.dart';
 
 Future<void> main() async {
@@ -70,6 +69,9 @@ class _MyHomePageState extends State<MyHomePage> {
         break;
       case 1:
         page = Placeholder();
+        break;
+      case 2:
+        page = SatPage();
         break;
       default:
         throw UnimplementedError('no widget for $selectedIndex');
@@ -170,6 +172,7 @@ class _NavigationSideBarState extends State<NavigationSideBar>{
             Divider(color: Colors.white),
             _buildNavItem(icon: Icons.linked_camera_outlined, selectedIcon: Icons.linked_camera, label: 'APOD', index: 0),
             _buildNavItem(icon: Icons.satellite_alt_outlined, selectedIcon: Icons.satellite_alt, label: 'ISS', index: 1),
+            _buildNavItem(icon: Icons.satellite_alt_outlined, selectedIcon: Icons.satellite_alt, label: 'SAT', index: 2),
           ],
         ),
       )
