@@ -1,0 +1,25 @@
+{
+  "version": 8,
+  "name": "Blank",
+  "metadata": {
+    "mapbox:autocomposite": true,
+    "mapbox:type": "template",
+    "mapbox:sdk-support": {
+      "js": "3.1.0",
+      "android": "11.2.0",
+      "ios": "11.2.0"
+    }
+  },
+  "sources": {},
+  "sprite": "mapbox://sprites/nata-beat/cltswla1u005s01qs4x7d00ib/ck2u8j60r58fu0sgyxrigm3cu",
+  "glyphs": "mapbox://fonts/mapbox/{fontstack}/{range}.pbf",
+  "projection": {"name": "globe"},
+  "layers": [],
+  "created": "2024-03-15T16:58:47.202Z",
+  "modified": "2024-03-15T16:58:47.202Z",
+  "id": "cltswla1u005s01qs4x7d00ib",
+  "owner": "nata-beat",
+  "visibility": "private",
+  "protected": false,
+  "draft": false
+}
