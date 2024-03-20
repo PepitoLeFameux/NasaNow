@@ -240,7 +240,7 @@ class ApodCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Container(
-                              color: Color(0xFFF7FFF7),
+                              color: Color(0x88F7FFF7),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
