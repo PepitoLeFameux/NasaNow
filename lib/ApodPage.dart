@@ -223,8 +223,8 @@ class ApodCard extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.all(3 ),
                   decoration: BoxDecoration(
-                      color: date == selectedDate ? Color.fromARGB(255, 255, 255, 255)
-                                                  : Color.fromARGB(255, 25, 12, 72),
+                      color: date == selectedDate ? Color(0xFFF7FFF7)
+                                                  : Color(0xFF829B87),
                       borderRadius: BorderRadius.circular(12)
                   ),
                   child: ClipRRect(
@@ -240,7 +240,7 @@ class ApodCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Container(
-                              color: Color.fromARGB(100, 255, 255, 255),
+                              color: Color(0xFFF7FFF7),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [

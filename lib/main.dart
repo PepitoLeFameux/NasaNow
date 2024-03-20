@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         title: 'Nasa Now',
         theme: ThemeData(
           useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Color.fromARGB(222, 20, 19, 79)),
+          colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF131010)),
           fontFamily: 'Megatrans'
         ),
         home: MyHomePage(),
@@ -83,7 +83,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 gradient: RadialGradient(
                   center: Alignment.topLeft,
                   radius: 1.1,
-                  colors: [Color.fromARGB(255, 14, 13, 30),Color.fromARGB(255, 28, 26, 86)],
+                  colors: [Color(0xFF343434), Color(0xFF131010)],
                 )
               ),
               child: Row(
@@ -98,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
-                              colors: [Color.fromARGB(255, 13, 11, 71), Color.fromARGB(255, 27, 23, 133)],
+                              colors: [Color(0xFFE2EFE2), Color(0xFF343434)],
                               begin: Alignment.centerRight,
                               end: Alignment.centerLeft,
                               stops: [0, 1]
@@ -147,9 +147,9 @@ class _NavigationSideBarState extends State<NavigationSideBar>{
           child: Row(
             children: [
               SizedBox(width: 10,),
-              Icon(isSelected ? selectedIcon : icon, color: isSelected ? Colors.white : Color.fromARGB(255, 101, 96, 209)),
+              Icon(isSelected ? selectedIcon : icon, color: isSelected ? Color(0xFFF7FFF7) : Color(0xFF829B87)),
               SizedBox(width: 20,),
-              Text(label, style: TextStyle(color: isSelected ? Colors.white : Color.fromARGB(255, 101, 96, 209)))]
+              Text(label, style: TextStyle(color: isSelected ? Color(0xFFF7FFF7) : Color(0xFF829B87)))]
           ),
         ),
       )
