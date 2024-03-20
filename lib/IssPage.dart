@@ -18,8 +18,8 @@ class _IssPageState extends State<IssPage> {
     super.initState();
     _api = IssApi();
     _issPosition = _api.getIssPosition();
-    // Actualiser la position de l'ISS toutes les 5 secondes
-    Timer.periodic(Duration(seconds: 5), (Timer t) => _refreshIssPosition());
+    // Actualiser la position de l'ISS toutes les 10 secondes
+    Timer.periodic(Duration(seconds: 10), (Timer t) => _refreshIssPosition());
   }
 
   void _refreshIssPosition() {
