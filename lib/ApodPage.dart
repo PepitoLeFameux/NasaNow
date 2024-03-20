@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:nasa_now/API/api.dart';
+import 'package:full_screen_image/full_screen_image.dart';
 
 class ApodSelectionNotifier with ChangeNotifier {
   int selectedApod = 0;
@@ -79,8 +80,13 @@ class _APODPageState extends State<APODPage> {
                                       return Text('Error: ${snapshot.error}');
                                     } else {
                                       return Container(
-
-                                        child: Image.memory(snapshot.data!)
+                                        child: FullScreenWidget(
+                                          disposeLevel: DisposeLevel.Medium,
+                                          child: Hero(
+                                            tag: "Astronomy Picture of The Day",
+                                            child: Image.memory(snapshot.data!)
+                                          )
+                                        )
                                       );
                                     }
                                   }
@@ -227,9 +233,9 @@ class ApodCard extends StatelessWidget {
                       fit: StackFit.expand,
                       children: [
                         Image.memory(
-                                snapshot.data!,
-                                fit:BoxFit.cover
-                            ),
+                          snapshot.data!,
+                          fit:BoxFit.cover
+                        ),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
