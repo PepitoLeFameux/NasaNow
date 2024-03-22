@@ -10,23 +10,7 @@ class IssPage extends StatefulWidget {
 }
 
 class _IssPageState extends State<IssPage> {
-  late IssApi _api;
-  late Future<Map<String, double>> _issPosition;
-
-  @override
-  void initState() {
-    super.initState();
-    _api = IssApi();
-    _issPosition = _api.getIssPosition();
-    // Actualiser la position de l'ISS toutes les 10 secondes
-    Timer.periodic(Duration(seconds: 10), (Timer t) => _refreshIssPosition());
-  }
-
-  void _refreshIssPosition() {
-    setState(() {
-      _issPosition = _api.getIssPosition();
-    });
-  }
+  IssMap map = IssMap();
 
   @override
   Widget build(BuildContext context) {
@@ -34,19 +18,7 @@ class _IssPageState extends State<IssPage> {
       appBar: AppBar(
         title: Text('ISS Location'),
       ),
-      body: FutureBuilder<Map<String, double>>(
-        future: _issPosition,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else {
-            final issPosition = LatLng(snapshot.data!['latitude']!, snapshot.data!['longitude']!);
-            return IssMap(issPosition: issPosition);
-          }
-        },
-      ),
+      body: IssMap(),
     );
   }
 }
