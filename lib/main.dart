@@ -1,19 +1,19 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
+import 'package:path_provider/path_provider.dart';
 import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:nasa_now/ApodPage.dart';
 import 'package:nasa_now/IssPage.dart';
-import 'package:path_provider/path_provider.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+
+void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF131010)),
-          fontFamily: 'Megatrans'
+          fontFamily: 'Megatrans',
         ),
         home: MyHomePage(),
       ),
@@ -33,146 +33,44 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MyAppState extends ChangeNotifier {
-
-}
+class MyAppState extends ChangeNotifier {}
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   var selectedIndex = 0;
-  final int r = 4;
-
-  void updateIndex(int index){
-    debugPrint(index.toString());
-    setState(() {
-      selectedIndex = index;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
-    Widget page;
-    switch(selectedIndex){
-      case 0:
-        page = APODPage();
-        break;
-      case 1:
-        page = IssPage();
-        break;
-      default:
-        throw UnimplementedError('no widget for $selectedIndex');
-    }
-    return LayoutBuilder(
-        builder: (context, constraints) {
-          return Scaffold(
-            body: Container(
-              width: constraints.maxWidth,
-              height: constraints.maxHeight,
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment.topLeft,
-                  radius: 1.1,
-                  colors: [Color(0xFF343434), Color(0xFF131010)],
-                )
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  NavigationSideBar(onItemSelected: updateIndex),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 8, left:8),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(20)),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Color(0xFFE2EFE2), Color(0xFF343434)],
-                              begin: Alignment.centerRight,
-                              end: Alignment.centerLeft,
-                              stops: [0, 1]
-                            )
-                          ),
-                          child: page,
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          );
-        }
-    );
-  }
-}
-
-class NavigationSideBar extends StatefulWidget {
-  final Function(int) onItemSelected;
-  const NavigationSideBar({super.key, required this.onItemSelected});
-
-  @override
-  State<NavigationSideBar> createState() => _NavigationSideBarState();
-}
-
-class _NavigationSideBarState extends State<NavigationSideBar>{
-  int selectedIndex = 0;
-  String debugText = "cc";
-
-  Widget _buildNavItem({required IconData icon, required IconData selectedIcon, required String label, required int index}){
-    final bool isSelected = index == selectedIndex;
-    return InkWell(
-      onTap:  () {
-        widget.onItemSelected(index);
-        setState(() {
-          selectedIndex = index;
-        });
-      },
-
-      child: Card(
-        color:Colors.transparent,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              SizedBox(width: 10,),
-              Icon(isSelected ? selectedIcon : icon, color: isSelected ? Color(0xFFF7FFF7) : Color(0xFF829B87)),
-              SizedBox(width: 20,),
-              Text(label, style: TextStyle(color: isSelected ? Color(0xFFF7FFF7) : Color(0xFF829B87)))]
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Nasa Now'),
+        centerTitle: true,
+      ),
+      body: selectedIndex == 0 ? APODPage() : IssPage(),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: selectedIndex,
+        onTap: (index) {
+          setState(() {
+            selectedIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.linked_camera_outlined),
+            label: 'APOD',
           ),
-        ),
-      )
-
-    );
-  }
-
-  @override
-  Widget build(BuildContext context){
-    return Container(
-      width: 200,
-      child: Padding(
-        padding: EdgeInsets.all(8),
-        child: Column(
-          children: [
-            Padding(padding: EdgeInsets.all(20), child: Image.asset("images/nasanow2.png")),
-            Divider(color: Colors.white),
-            _buildNavItem(icon: Icons.linked_camera_outlined, selectedIcon: Icons.linked_camera, label: 'APOD', index: 0),
-            _buildNavItem(icon: Icons.satellite_alt_outlined, selectedIcon: Icons.satellite_alt, label: 'ISS', index: 1),
-          ],
-        ),
-      )
+          BottomNavigationBarItem(
+            icon: Icon(Icons.satellite_alt_outlined),
+            label: 'ISS',
+          ),
+        ],
+      ),
     );
   }
 }
