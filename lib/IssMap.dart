@@ -42,55 +42,37 @@ class IssMarker extends StatefulWidget {
 }
 
 class _IssMarkerState extends State<IssMarker> {
-  late Future<Map<String, double>> futurePosition = IssApi.instance.getIssPosition();
-  LatLng? position;
+  LatLng position = LatLng(0, 0);
 
   void updatePosition(){
     setState(() {
-      futurePosition = IssApi.instance.getIssPosition();
+      position = IssApi.instance.getLatLng();
     });
   }
 
   @override
   void initState(){
     super.initState();
-    Timer.periodic(Duration(seconds: 2), (Timer t) => updatePosition());
+    Timer.periodic(Duration(milliseconds: 100), (Timer t) => updatePosition());
   }
 
   @override
   Widget build(BuildContext buildContext){
-    return FutureBuilder<Map<String, double>>(
-      future: futurePosition,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-        }
-        else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else {
-          LatLng latlng = LatLng(snapshot.data!['latitude']!, snapshot.data!['longitude']!);
-          position = latlng;
-        }
-        if(position==null){
-          return CircularProgressIndicator();
-        }
-        else{
-          return MarkerLayer(
-            markers: [
-              Marker(
-                width: 80.0,
-                height: 80.0,
-                point: position!,
-                builder: (ctx) => Container(
-                    child: Image.asset('images/iss.png')
-                ),
-              ),
-            ],
-          );
-        }
-      }
+    return MarkerLayer(
+      markers: [
+        Marker(
+          width: 80.0,
+          height: 80.0,
+          point: position,
+          builder: (ctx) => Container(
+              child: Hero(tag: 'issmarker', child: Image.asset('images/iss.png'))
+          ),
+        ),
+      ],
     );
   }
 }
+
 
 class SpeedCard extends StatefulWidget{
   @override
@@ -98,72 +80,58 @@ class SpeedCard extends StatefulWidget{
 }
 
 class _SpeedCardState extends State<SpeedCard> {
-  late Future<Map<String, double>> futurePosition = IssApi.instance.getIssPosition();
+  LatLng latlng = LatLng(0, 0);
   double speed = 0;
-  double longitude = 0;
-  double latitude = 0;
 
-  void updateSpeed() {
+  void updateValues() {
     setState(() {
-      futurePosition = IssApi.instance.getIssPosition();
+      latlng = IssApi.instance.getLatLng();
+      speed = IssApi.instance.getSpeed();
     });
   }
 
   @override
   void initState(){
     super.initState();
-    Timer.periodic(Duration(seconds: 2), (Timer t) => updateSpeed());
+    Timer.periodic(Duration(milliseconds: 100), (Timer t) => updateValues());
   }
 
   @override
   Widget build(BuildContext buildContext){
-    return FutureBuilder<Map<String, double>>(
-        future: futurePosition,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            speed = snapshot.data!['speed']!;
-            longitude = snapshot.data!['longitude']!;
-            latitude = snapshot.data!['latitude']!;
-          }
-          return Column(
-            children: [
-              Container(
-                width: 160,
-                height: 40,
-                child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text("Speed : ${speed.toStringAsFixed(0)} m/s"),
-                    )
-                ),
-              ),
-              Container(
-                width: 160,
-                height: 40,
-                child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text("Latitude: ${latitude.toStringAsFixed(2)}"),
-                    )
-                ),
-              ),
-              Container(
-                width: 160,
-                height: 40,
-                child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text("Longitude: ${longitude.toStringAsFixed(2)}"),
-                    )
-                ),
-              ),
+    return Column(
+      children: [
+        Container(
+          width: 160,
+          height: 40,
+          child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("Speed : ${speed.toStringAsFixed(0)} m/s"),
+              )
+          ),
+        ),
+        Container(
+          width: 160,
+          height: 40,
+          child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("Latitude: ${latlng.latitude.toStringAsFixed(2)}"),
+              )
+          ),
+        ),
+        Container(
+          width: 160,
+          height: 40,
+          child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("Longitude: ${latlng.longitude.toStringAsFixed(2)}"),
+              )
+          ),
+        ),
 
-            ],
-          );
-        }
+      ],
     );
   }
 }
@@ -186,7 +154,7 @@ class _IssPathState extends State<IssPath> {
   @override
   void initState(){
     super.initState();
-    Timer.periodic(Duration(milliseconds: 500), (Timer t) => updatePath());
+    Timer.periodic(Duration(milliseconds: 100), (Timer t) => updatePath());
   }
 
   List<Polyline> cutPath(){
@@ -195,7 +163,8 @@ class _IssPathState extends State<IssPath> {
 
     if (path.isNotEmpty) {
       LatLng oldLoc = path[0];
-      for(var location in path.sublist(1, path.length)){
+      late LatLng location;
+      for(location in path.sublist(1, path.length)){
         segment.add(oldLoc);
         if((oldLoc.longitude - location.longitude).abs() > 180){
           list.add(
@@ -209,6 +178,7 @@ class _IssPathState extends State<IssPath> {
         }
         oldLoc = location;
       }
+      segment.add(location);
       list.add(
         Polyline(
           points: List.from(segment),
