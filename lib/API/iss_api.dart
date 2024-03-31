@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
+import 'dart:io';
 
 class IssApi {
 
@@ -14,9 +15,12 @@ class IssApi {
 
   static double lat = 0, lon = 0, time = 0, speed = 0;
   List<LatLng> positionsList = [];
+  List<int> timeList = [];
   List<bool> dayLightList = [];
   static double histTime = (DateTime.now().millisecondsSinceEpoch ~/ 1000).toDouble();
-  static int step = 50;
+  static int step = 9;
+  //static double maxData = 10800 / step;
+  static double maxData = double.infinity;
 
   LatLng getLatLng() {
     return LatLng(lat, lon);
@@ -38,6 +42,37 @@ class IssApi {
     return dayLightList;
   }
 
+  Future<void> saveToCsv() async {
+    List<Map<String, dynamic>> data = [];
+    for(int i=0; i<timeList.length; i++){
+      data.add({'time': timeList[i], 'lat': positionsList[i].latitude, 'lon': positionsList[i].longitude});
+    }
+    String csvContent = listMapToCsv(data);
+    String filePath = 'C:/Users/123ro/Desktop/csv/data.csv';
+    File file = File(filePath);
+
+    try {
+      // Write the CSV string to the file, creating the file if it doesn't exist
+      await file.writeAsString(csvContent);
+      debugPrint('Data successfully saved as CSV at $filePath');
+    } catch (e) {
+      // If an error occurs, print it or handle it as needed
+      debugPrint('Failed to save data as CSV: $e');
+    }
+  }
+
+  String listMapToCsv(List<Map<String, dynamic>> list) {
+    if (list.isEmpty) return '';
+    List<String> headers = list.first.keys.toList();
+    List<List<dynamic>> csvRows = [headers];
+
+    for (var map in list) {
+      csvRows.add(headers.map((h) => map[h]?.toString() ?? '').toList());
+    }
+
+    return csvRows.map((row) => row.join(',')).join('\n');
+  }
+
   void getIssPosition() async {
     String uri = 'https://api.wheretheiss.at/v1/satellites/25544/positions?timestamps=';
     uri += '${DateTime.now().millisecondsSinceEpoch ~/ 1000},';
@@ -56,17 +91,19 @@ class IssApi {
       lat = today['latitude'];
       lon = today['longitude'];
       time = today['timestamp'].toDouble();
-      speed = data[0]['velocity'] / 3.6;
+      speed = today['velocity'] / 3.6;
+      timeList.add(time.toInt());
       positionsList.add(LatLng(lat, lon));
+      dayLightList.add(today['visibility'] == 'dayLight' ? true : false);
 
-      if (positionsList.length < 10800 / step) {
+      if (positionsList.length < maxData) {
         for (var position in data.sublist(1, data.length)) {
-          positionsList.insert(
-              0, LatLng(position['latitude'], position['longitude']));
-          dayLightList.add(
-              position['visibility'] == 'dayLight' ? true : false);
+          positionsList.insert(0, LatLng(position['latitude'], position['longitude']));
+          timeList.insert(0, position['timestamp'].toInt());
+          dayLightList.insert(0,position['visibility'] == 'dayLight' ? true : false);
         }
       }
+    //saveToCsv();
     }
     else {
       throw Exception('Failed to load ISS position');
