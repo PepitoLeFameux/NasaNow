@@ -14,14 +14,15 @@ class IssMap extends StatelessWidget {
       children: [
         FlutterMap(
           options: MapOptions(
-            zoom: 2.0,
+            maxBounds: LatLngBounds( LatLng(-70, -180), LatLng(80, 180)),
+            minZoom: 0,
+            maxZoom: 8,
+            zoom: 2,
           ),
           children: [
             TileLayer(
-
                 urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
                 subdomains: ['a', 'b', 'c'],
-
             ),
             IssMarker(),
             IssPath()
@@ -65,7 +66,7 @@ class _IssMarkerState extends State<IssMarker> {
           height: 80.0,
           point: position,
           builder: (ctx) => Container(
-              child: Hero(tag: 'issmarker', child: Image.asset('images/iss.png'))
+              child: position==LatLng(0, 0) ? CircularProgressIndicator() : Image.asset('images/iss.png')
           ),
         ),
       ],
