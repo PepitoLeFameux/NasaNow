@@ -39,7 +39,7 @@ class _APODPageState extends State<APODPage> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('images/background_apod.jpeg'),
+            image: AssetImage('images/background.jpeg'),
             fit: BoxFit.cover,
           ),
         ),

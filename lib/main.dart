@@ -1,12 +1,4 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables
-
-import 'package:path_provider/path_provider.dart';
-import 'dart:ffi';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:nasa_now/ApodPage.dart';
-import 'package:nasa_now/IssPage.dart';
-
 
 void main() {
   runApp(const MyApp());
@@ -17,57 +9,63 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => MyAppState(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Nasa Now',
-        theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF131010)),
-          fontFamily: 'Megatrans',
-        ),
-        home: MyHomePage(),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Nasa Now',
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF131010)),
+        fontFamily: 'Megatrans',
       ),
+      home: MyHomePage(),
     );
   }
 }
 
-class MyAppState extends ChangeNotifier {}
-
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends StatelessWidget {
   const MyHomePage({Key? key}) : super(key: key);
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  var selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Nasa Now'),
-        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Row(
+          children: [
+            Image.asset(
+              'images/LOGO.png',
+              width: 300,
+              height: 190,
+            ),
+            SizedBox(width: 8),
+          ],
+        ),
+        centerTitle: false,
       ),
-      body: selectedIndex == 0 ? APODPage() : IssPage(),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: selectedIndex,
-        onTap: (index) {
-          setState(() {
-            selectedIndex = index;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.linked_camera_outlined),
-            label: 'APOD',
+      body: Stack(
+        children: [
+          // Background image
+          Image.asset(
+            'images/background.jpeg',
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.satellite_alt_outlined),
-            label: 'ISS',
+          // Page content
+          Positioned.fill(
+            top: 100,
+            child: Center(
+              child: Text(
+                'Rien pour l instant chacal',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
           ),
         ],
       ),
