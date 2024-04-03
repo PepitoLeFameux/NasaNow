@@ -13,9 +13,6 @@ class _IssPageState extends State<IssPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('ISS Location'),
-      ),
       body: IssMap(),
     );
   }
