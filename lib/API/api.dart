@@ -41,7 +41,7 @@ class Api{
           final String path = 'APOD-$date.${imageUrl.split('.').last}';
           final String hdPath = 'APOD-$date-HD.${imageUrl.split('.').last}';
 
-          debugPrint(date);
+          //debugPrint(date);
 
 
 

@@ -8,6 +8,12 @@ version: 1.0.0+1
 environment:
   sdk: '>=3.3.0 <4.0.0'
 
+
+python_ffi:
+  modules:
+    basic_cli_adder:
+      path: python-modules/basic_cli_adder.py
+
 dependencies:
   flutter:
     sdk: flutter
@@ -23,6 +29,12 @@ dependencies:
   intl: ^0.19.0
   full_screen_image: ^2.0.0
   geolocator: ^8.0.0
+  flutter_js: ^0.8.0
+  csv: ^6.0.0
+  geocoding: ^3.0.0
+  geojson_vi: ^2.2.3
+  country_coder: ^1.2.0
+  flag: ^7.0.0
 
 dev_dependencies:
   flutter_test:
@@ -33,6 +45,7 @@ flutter:
   uses-material-design: true
   assets:
     - images/
+    - assets/
 
   fonts:
     - family: Megatrans

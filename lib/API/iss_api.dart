@@ -13,17 +13,20 @@ class IssApi {
   IssApi._privateConstructor(){Timer.periodic(Duration(seconds: 1, milliseconds: 500), (Timer t) => getIssPosition());}
   static IssApi get instance => _instance;
 
-  static double lat = 0, lon = 0, time = 0, speed = 0;
+  static double time = 0, speed = 0;
   List<LatLng> positionsList = [];
   List<int> timeList = [];
   List<bool> dayLightList = [];
   static double histTime = (DateTime.now().millisecondsSinceEpoch ~/ 1000).toDouble();
   static int step = 9;
-  //static double maxData = 10800 / step;
-  static double maxData = double.infinity;
+  static double maxData = 10800 / step;
 
   LatLng getLatLng() {
-    return LatLng(lat, lon);
+    return positionsList.length >= 1 ? positionsList.elementAt(positionsList.length - 1) : LatLng(0, 0);
+  }
+  
+  LatLng getPreviousLatLng() {
+    return positionsList.length >= 2 ? positionsList.elementAt(positionsList.length - 2) : LatLng(0, 0);
   }
 
   double getSpeed() {
@@ -88,8 +91,8 @@ class IssApi {
       final data = json.decode(response.body);
 
       dynamic today = data[0];
-      lat = today['latitude'];
-      lon = today['longitude'];
+      double lat = today['latitude'];
+      double lon = today['longitude'];
       time = today['timestamp'].toDouble();
       speed = today['velocity'] / 3.6;
       timeList.add(time.toInt());

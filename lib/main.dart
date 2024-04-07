@@ -2,6 +2,8 @@
 
 import 'dart:ffi';
 import 'package:flutter/material.dart';
+import 'package:flutter_js/flutter_js.dart';
+import 'package:nasa_now/IssMap.dart';
 import 'package:provider/provider.dart';
 import 'package:nasa_now/ApodPage.dart';
 import 'package:nasa_now/IssPage.dart';
@@ -50,7 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final int r = 4;
 
   void updateIndex(int index){
-    debugPrint(index.toString());
+    //debugPrint(index.toString());
     setState(() {
       selectedIndex = index;
     });
@@ -74,47 +76,50 @@ class _MyHomePageState extends State<MyHomePage> {
       default:
         throw UnimplementedError('no widget for $selectedIndex');
     }
-    return LayoutBuilder(
-        builder: (context, constraints) {
-          return Scaffold(
-            body: Container(
-              width: constraints.maxWidth,
-              height: constraints.maxHeight,
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment.topLeft,
-                  radius: 1.1,
-                  colors: [Color(0xFF343434), Color(0xFF131010)],
-                )
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  NavigationSideBar(onItemSelected: updateIndex),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 8, left:8),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(20)),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Color(0xFFE2EFE2), Color(0xFF343434)],
-                              begin: Alignment.centerRight,
-                              end: Alignment.centerLeft,
-                              stops: [0, 1]
-                            )
+    return ChangeNotifierProvider(
+      create: (context) => IssMapState(),
+      child: LayoutBuilder(
+          builder: (context, constraints) {
+            return Scaffold(
+              body: Container(
+                width: constraints.maxWidth,
+                height: constraints.maxHeight,
+                decoration: BoxDecoration(
+                  gradient: RadialGradient(
+                    center: Alignment.topLeft,
+                    radius: 1.1,
+                    colors: [Color(0xFF343434), Color(0xFF131010)],
+                  )
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    NavigationSideBar(onItemSelected: updateIndex),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 8, left:8),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.only(topLeft: Radius.circular(20)),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Color(0xFFE2EFE2), Color(0xFF343434)],
+                                begin: Alignment.centerRight,
+                                end: Alignment.centerLeft,
+                                stops: [0, 1]
+                              )
+                            ),
+                            child: page,
                           ),
-                          child: page,
                         ),
                       ),
-                    ),
-                  )
-                ],
+                    )
+                  ],
+                ),
               ),
-            ),
-          );
-        }
+            );
+          }
+      ),
     );
   }
 }
