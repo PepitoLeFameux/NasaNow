@@ -1,178 +1,186 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables
-
-import 'dart:ffi';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:nasa_now/ApodPage.dart';
+import 'package:nasa_now/APODPage.dart';
+import 'package:nasa_now/IssMap.dart';
 import 'package:nasa_now/IssPage.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:nasa_now/Template/ApodGallery.dart';
+import 'package:provider/provider.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => MyAppState(),
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ApodSelectionNotifier()),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Nasa Now',
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF131010)),
-          fontFamily: 'Megatrans'
+          fontFamily: 'Megatrans',
         ),
         home: MyHomePage(),
       ),
-    );
-  }
+    ),
+  );
 }
 
-class MyAppState extends ChangeNotifier {
-
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-
-  var selectedIndex = 0;
-  final int r = 4;
-
-  void updateIndex(int index){
-    debugPrint(index.toString());
-    setState(() {
-      selectedIndex = index;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-  }
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Widget page;
-    switch(selectedIndex){
-      case 0:
-        page = APODPage();
-        break;
-      case 1:
-        page = IssPage();
-        break;
-      default:
-        throw UnimplementedError('no widget for $selectedIndex');
-    }
-    return LayoutBuilder(
-        builder: (context, constraints) {
-          return Scaffold(
-            body: Container(
-              width: constraints.maxWidth,
-              height: constraints.maxHeight,
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: Alignment.topLeft,
-                  radius: 1.1,
-                  colors: [Color(0xFF343434), Color(0xFF131010)],
-                )
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  NavigationSideBar(onItemSelected: updateIndex),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 8, left:8),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(20)),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Color(0xFFE2EFE2), Color(0xFF343434)],
-                              begin: Alignment.centerRight,
-                              end: Alignment.centerLeft,
-                              stops: [0, 1]
-                            )
-                          ),
-                          child: page,
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          );
-        }
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Nasa Now',
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF131010)),
+        fontFamily: 'Megatrans',
+      ),
+      home: MyHomePage(),
     );
   }
 }
 
-class NavigationSideBar extends StatefulWidget {
-  final Function(int) onItemSelected;
-  const NavigationSideBar({super.key, required this.onItemSelected});
+class MyHomePage extends StatelessWidget {
+  const MyHomePage({Key? key}) : super(key: key);
 
   @override
-  State<NavigationSideBar> createState() => _NavigationSideBarState();
-}
-
-class _NavigationSideBarState extends State<NavigationSideBar>{
-  int selectedIndex = 0;
-  String debugText = "cc";
-
-  Widget _buildNavItem({required IconData icon, required IconData selectedIcon, required String label, required int index}){
-    final bool isSelected = index == selectedIndex;
-    return InkWell(
-      onTap:  () {
-        widget.onItemSelected(index);
-        setState(() {
-          selectedIndex = index;
-        });
-      },
-
-      child: Card(
-        color:Colors.transparent,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Center(
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(width: 10,),
-              Icon(isSelected ? selectedIcon : icon, color: isSelected ? Color(0xFFF7FFF7) : Color(0xFF829B87)),
-              SizedBox(width: 20,),
-              Text(label, style: TextStyle(color: isSelected ? Color(0xFFF7FFF7) : Color(0xFF829B87)))]
+              Image.asset(
+                'images/LOGOfin.png',
+                width: 300,
+                height: 190,
+              ),
+              SizedBox(width: 8),
+            ],
           ),
         ),
-      )
-
-    );
-  }
-
-  @override
-  Widget build(BuildContext context){
-    return Container(
-      width: 200,
-      child: Padding(
-        padding: EdgeInsets.all(8),
+        centerTitle: false,
+      ),
+      drawer: Drawer(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Padding(padding: EdgeInsets.all(20), child: Image.asset("images/nasanow2.png")),
-            Divider(color: Colors.white),
-            _buildNavItem(icon: Icons.linked_camera_outlined, selectedIcon: Icons.linked_camera, label: 'APOD', index: 0),
-            _buildNavItem(icon: Icons.satellite_alt_outlined, selectedIcon: Icons.satellite_alt, label: 'ISS', index: 1),
+            Expanded(
+              child: ApodGalleryPage(),
+            ),
           ],
         ),
-      )
+      ),
+      body: Stack(
+        children: [
+          // Background image
+          Image.asset(
+            'images/wallpaper.jpg',
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+          ),
+          // Page content
+          Positioned.fill(
+            top: 100,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(0.4),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(10),
+                          child: Text(
+                            'Astronomy Picture of the Day',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFFc00114),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: SizedBox(
+                            child: APODPage(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(0.4),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        topRight: Radius.circular(20),
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(10),
+                          child: Text(
+                            'ISS Locator',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFFc00114),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.zero,
+                              bottomRight: Radius.zero,
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => IssPage()),
+                                );
+                              },
+                              child: IssMap(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
