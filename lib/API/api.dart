@@ -1,10 +1,7 @@
 import 'dart:core';
-import 'dart:developer';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
-import 'package:path_provider/path_provider.dart';
 
 class Api{
   final apiKey = '0pVa9K2kUiwq4AiTue75Rz77ncgIUfCB6cx5HFAh';

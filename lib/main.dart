@@ -1,13 +1,10 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
-import 'dart:ffi';
 import 'package:flutter/material.dart';
-import 'package:flutter_js/flutter_js.dart';
 import 'package:nasa_now/IssMap.dart';
 import 'package:provider/provider.dart';
 import 'package:nasa_now/ApodPage.dart';
 import 'package:nasa_now/IssPage.dart';
-import 'package:path_provider/path_provider.dart';
 import 'ApodGallery.dart';
 
 Future<void> main() async {
@@ -41,7 +38,7 @@ class MyApp extends StatelessWidget {
 
 
 class MyHomePage extends StatelessWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+  const MyHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {

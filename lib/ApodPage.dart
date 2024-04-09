@@ -1,8 +1,6 @@
-import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:nasa_now/API/iss_api.dart';
 import 'package:provider/provider.dart';
 import 'package:nasa_now/API/api.dart';
 import 'package:full_screen_image/full_screen_image.dart';
