@@ -11,7 +11,7 @@ class Api{
   List<Map<String, dynamic>> apodInfos = [];
   List<Map<String, Uint8List>> apodImageData = [];
   List<Map<String, Uint8List>> apodImageDataHd = [];
-  static int nDays = 100;
+  static int nDays = 30;
   bool alreadyInit = false;
 
   //Pour faire un singleton

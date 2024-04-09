@@ -2,21 +2,10 @@ import 'dart:ffi';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:nasa_now/API/iss_api.dart';
 import 'package:provider/provider.dart';
 import 'package:nasa_now/API/api.dart';
 import 'package:full_screen_image/full_screen_image.dart';
-
-class ApodSelectionNotifier with ChangeNotifier {
-  int selectedApod = 0;
-  String selectedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-  final api = Api.instance;
-
-  void setSelectedApod(String date) {
-    selectedApod = api.dateToIndex(date);
-    selectedDate = date;
-    notifyListeners();
-  }
-}
 
 class APODPage extends StatefulWidget{
   const APODPage({super.key});
@@ -28,126 +17,89 @@ class APODPage extends StatefulWidget{
 class _APODPageState extends State<APODPage> {
 
   final api = Api.instance;
-  final ApodSelectionNotifier notifier = ApodSelectionNotifier();
 
   @override
   Widget build(BuildContext context){
-    return ChangeNotifierProvider<ApodSelectionNotifier>.value(
-      value: notifier,
+    ApodNotifier apodNotifier = context.watch<ApodNotifier>();
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.withOpacity(0.4),
+        borderRadius: BorderRadius.all(Radius.zero),
+      ),
       child: FutureBuilder<List<Map<String, dynamic>>>(
-        future: api.getApodInfos(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            List<Map<String, dynamic>> items = snapshot.data!.toList();
-            return Column(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Padding(
+          future: api.getApodInfos(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              List<Map<String, dynamic>> items = snapshot.data!.toList();
+              return Column(
+                children: [
+                  Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Consumer<ApodSelectionNotifier>(
-                          builder: (context, notifier, child){
-                            return Text('Astronomy Picture Of the Day - ${DateFormat.yMMMd().format(DateTime.parse(notifier.selectedDate))} - ${items[notifier.selectedApod]['title']}');
+                    child: Container(
+                      color: Colors.transparent,
+                      padding: EdgeInsets.all(8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Astronomy Picture Of the Day - ${DateFormat.yMMMd().format(DateTime.parse(apodNotifier.selectedDate))} - ${items[apodNotifier.selectedIndex]['title']}',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black54,
+                            ),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            items[apodNotifier.selectedIndex]['desc']!,
+                            style: TextStyle(fontSize: 11, color: Colors.black45),
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            "Copyright: ${items[apodNotifier.selectedIndex]['copyright']}",
+                            style: TextStyle(fontSize: 11, color: Colors.black54),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        color: Colors.transparent,
+                        child: FutureBuilder<Uint8List>(
+                          future: Api.instance.getApodImageData(items[apodNotifier.selectedIndex]['date'], true),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            } else if (snapshot.hasError) {
+                              return Text('Error: ${snapshot.error}');
+                            } else {
+                              return FullScreenWidget(
+                                disposeLevel: DisposeLevel.Low,
+                                child: Hero(
+                                  tag: "Astronomy Picture of The Day",
+                                  child: Image.memory(
+                                    snapshot.data!,
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              );
+                            }
                           },
                         ),
                       ),
                     ),
                   ),
-                ),
-                Expanded(
-                  flex: 6,
-                  child: Row(
-                    children: [
-                      Expanded(
-                          flex: 3,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Consumer<ApodSelectionNotifier>(
-                              builder: (context, notifier, child){
-                                return FutureBuilder<Uint8List>(
-                                  future: api.getApodImageData(items[notifier.selectedApod]['date'], true),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState == ConnectionState.waiting) {
-                                      return Center(child: CircularProgressIndicator());
-                                    } else if (snapshot.hasError) {
-                                      return Text('Error: ${snapshot.error}');
-                                    } else {
-                                      return Container(
-                                        child: FullScreenWidget(
-                                          disposeLevel: DisposeLevel.Medium,
-                                          child: Hero(
-                                            tag: "Astronomy Picture of The Day",
-                                            child: Image.memory(snapshot.data!)
-                                          )
-                                        )
-                                      );
-                                    }
-                                  }
-                                );
-                              }
-                            ),
-                          )
-                      ),
-                      Expanded(
-                          flex: 4,
-                          child: SingleChildScrollView(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Card(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Consumer<ApodSelectionNotifier>(
-                                        builder: (context, notifier,
-                                            child) {
-                                          return Text(items[notifier.selectedApod]['desc']!);
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8),
-                                  child: Card(
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Consumer<
-                                          ApodSelectionNotifier>(
-                                        builder: (context, notifier,
-                                            child) {
-                                          return Text(
-                                              "Copyright: ${items[notifier
-                                                  .selectedApod]['copyright']}");
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          )
-                      )
-                    ],
-                  ),
-                ),
-                Expanded(
-                  flex:4,
-                  child: ApodGallery(items: items)
-                )
-              ]
-            );
-          }
-        },
+                ],
+              );
+            }
+          },
       ),
     );
   }
@@ -170,6 +122,7 @@ class _ApodGalleryState extends State<ApodGallery> {
 
   @override
   Widget build(BuildContext context) {
+    ApodNotifier apodNotifier = context.watch<ApodNotifier>();
     return ClipRRect(
       borderRadius: BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
       child: Container(
@@ -181,11 +134,7 @@ class _ApodGalleryState extends State<ApodGallery> {
           ),
           children: [
             for(var item in widget.items)
-              Consumer<ApodSelectionNotifier>(
-                  builder: (context, notifier, child){
-                    return ApodCard(date: item['date'], selectedDate: notifier.selectedDate);
-                  }
-              )
+              ApodCard(date: item['date'], selectedDate: apodNotifier.selectedDate),
           ],
         ),
       ),
@@ -206,6 +155,7 @@ class ApodCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context){
+    ApodNotifier apodNotifier = context.watch<ApodNotifier>();
     return Padding(
       padding: EdgeInsets.all(4),
       child: Card(
@@ -218,7 +168,7 @@ class ApodCard extends StatelessWidget {
               return Text('Error: ${snapshot.error}');
             } else {
               return InkWell(
-                onTap: (){Provider.of<ApodSelectionNotifier>(context, listen: false).setSelectedApod(date);},
+                onTap: () => apodNotifier.setSelectedApod(date),
                 borderRadius: BorderRadius.circular(12),
                 child: Container(
                   padding: EdgeInsets.all(3 ),
@@ -260,5 +210,19 @@ class ApodCard extends StatelessWidget {
         )
       ),
     );
+  }
+}
+
+
+class ApodNotifier extends ChangeNotifier {
+
+
+  int selectedIndex = 0;
+  String selectedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+  void setSelectedApod(String date) {
+    selectedIndex = Api.instance.dateToIndex(date);
+    selectedDate = date;
+    notifyListeners();
   }
 }
