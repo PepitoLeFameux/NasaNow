@@ -1,16 +1,31 @@
-# nasa_now
+# Nasa Now
 
-Prototype
+Une application en temps réel donnant des informations sur la Nasa
 
-## Getting Started
+## Astronomy Picture Of the Day (APOD)
 
-This project is a starting point for a Flutter application.
+Consultez l'images du jour sélectionnée par la Nasa, et pourcourez l'historique pour en découvrir plus
 
-A few resources to get you started if this is your first Flutter project:
+## ISS Tracker
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Actualisation en temps réel
+Découvrez au-dessus de quel endroit se trouve la Station Spatial Internationale en temps réel (mise à jour toutes les 1.5 secondes)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Historique réel
+Affichage de l'historique de la trajectoire exacte sur 3 heures sur la carte
+
+### Country Selector
+Choisissez un pays pour connaître à quel endroit et à quelle heure précisément la station passera au-dessus du territoire
+
+## Comment lancer l'application
+# Cloner le repository
+Clonez ce repository grâce à git en copiant collant le lien avec la commande 
+```
+git clone {lien}
+```
+
+# Ouvrir le projet avec Android Studio
+Ouvrez le dossier racine ddu projet dans Android Studio en installez les packages nécessaires
+
+# Lancer l'aplication
+Sélectionnez la plateforme de destination et cliquez sur "Run"
